@@ -326,6 +326,16 @@ namespace RT64 {
             state->setTexcoordWrapPoint(wrapPointU, wrapPointV);
         }
 
+        void setTileScrollFloatV1(State *state, DisplayList **dl) {
+            const uint8_t tile = (*dl)->p1(0, 3);
+            *dl = *dl + 1;
+
+            float uls, ult;
+            std::memcpy(&uls, &(*dl)->w0, sizeof(float));
+            std::memcpy(&ult, &(*dl)->w1, sizeof(float));
+            state->rdp->setTileScrollFloat(tile, uls, ult);
+        }
+
         void noOpHook(State *state, DisplayList **dl) {
             uint32_t magicNumber = (*dl)->p0(0, 24);
             if (magicNumber == RT64_HOOK_MAGIC_NUMBER) {
@@ -433,6 +443,7 @@ namespace RT64 {
             Map[G_EX_MATRIX_FLOAT_V1] = &matrixFloatV1;
             Map[G_EX_SETVERTEXSEGMENT_V1] = &setVertexSegmentV1;
             Map[G_EX_SETTEXCOORDWRAPPOINT_V1] = &setTexcoordWrapPointV1;
+            Map[G_EX_SETTILESCROLLFLOAT_V1] = &setTileScrollFloatV1;
             MapInitialized = true;
         }
     }

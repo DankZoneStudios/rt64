@@ -302,20 +302,21 @@ namespace RT64 {
                     dstRDPTile.maskt = (tile.maskt > 0) ? (1 << tile.maskt) : 0;
                     dstRDPTile.shifts = ShiftScaleMap[tile.shifts];
                     dstRDPTile.shiftt = ShiftScaleMap[tile.shiftt];
-                    dstRDPTile.uls = float(tile.uls);
-                    dstRDPTile.ult = float(tile.ult);
+                    const interop::float2 &tileScroll = rdp->extended.tileScrolls[tileIndex];
+                    dstRDPTile.uls = float(tile.uls) + tileScroll.x;
+                    dstRDPTile.ult = float(tile.ult) + tileScroll.y;
                     dstRDPTile.cms = tile.cms | ((tile.masks == 0) ? G_TX_CLAMP : 0);
                     dstRDPTile.cmt = tile.cmt | ((tile.maskt == 0) ? G_TX_CLAMP : 0);
 
                     // Since we can't simulate not sending the triangle coefficients individually and it falls in the realm
                     // of undefined behavior, when the texture state is off, we merely clamp the result.
                     if (drawCall.textureOn) {
-                        dstRDPTile.lrs = float(tile.lrs);
-                        dstRDPTile.lrt = float(tile.lrt);
+                        dstRDPTile.lrs = float(tile.lrs) + tileScroll.x;
+                        dstRDPTile.lrt = float(tile.lrt) + tileScroll.y;
                     }
                     else {
-                        dstRDPTile.lrs = float(tile.uls);
-                        dstRDPTile.lrt = float(tile.ult);
+                        dstRDPTile.lrs = dstRDPTile.uls;
+                        dstRDPTile.lrt = dstRDPTile.ult;
                         dstRDPTile.cms |= G_TX_CLAMP;
                         dstRDPTile.cmt |= G_TX_CLAMP;
                     }
